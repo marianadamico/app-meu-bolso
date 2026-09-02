@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { router } from expo - router;
 import AppInput from '../src/components/AppInput';
 import AppButton from '../src/components/AppButton';
@@ -10,6 +10,16 @@ export default function Register() {
     const [confirm, setConfirm] = useState('');
     const [loading, setLoading] = useState(false);
 
+    //trim é uma função ou método usado para remover espaços em branco 
+    async function handleRegister() {
+        if(!email.trim() ||!password||!confirm)
+            return Alert.alert('Atenção', "Preencha todos os campos");
+        if(password.leng<6)
+            return Alert.alert('Atenção', 'A senha deve ter no mínimo 6 caracteres');
+        if(password!==confirm)
+            return Alert.alert('Atenção', 'As senhas não conferem');
+    }
+
     return (
         <KeyboardAvoidingView style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -17,19 +27,20 @@ export default function Register() {
             <AppInput label="E-mail"
                 //recusa letras maiusculas (autocapitalize) =>
                 autoCapitalize="none" keyboardType="email-address"
-            value={email} onChangeText={setEmail}
+                value={email} onChangeText={setEmail}
             />
             <AppInput label="Senha"
                 secureTextEntry
-            value={password} onChangeText={setPassword}
+                value={password} onChangeText={setPassword}
             />
             <AppInput label="Confirmar senha"
                 secureTextEntry
-            value={confirm} onChangeText={setConfirm}
+                value={confirm} onChangeText={setConfirm}
             />
             <AppButton
                 title="Criar conta"
-            loading={loading}
+                loading={loading}
+                onPress={handleRegister} loading={loading}
             />
             <TouchableOpacity
                 onPress={() => router.push('/register')}>
