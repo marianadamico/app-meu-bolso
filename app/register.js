@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
-import { router } from expo - router;
 import AppInput from '../src/components/AppInput';
 import AppButton from '../src/components/AppButton';
 import { COLORS } from "@/src/constants/theme";
+import { signUp } from '../src/services/authService';
+import { router } from 'expo-router';
+
 export default function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -12,13 +14,25 @@ export default function Register() {
 
     //trim é uma função ou método usado para remover espaços em branco 
     async function handleRegister() {
-        if(!email.trim() ||!password||!confirm)
-            return Alert.alert('Atenção', "Preencha todos os campos");
-        if(password.leng<6)
+        if (!email.trim() || !password || !confirm)
+            return Alert.alert('Atenção', 'Preencha todos os campos');
+        if (password.length < 6)
             return Alert.alert('Atenção', 'A senha deve ter no mínimo 6 caracteres');
-        if(password!==confirm)
+        if (password !== confirm)
             return Alert.alert('Atenção', 'As senhas não conferem');
-    }
+        try {
+            setLoading(true);
+            const { data, error } = await signUp(email.trim(), password);
+            if (error) {
+                Alert.alert('Erro', error.message);
+                console.log('Erro', error.message); return;}
+                if (data.session) router.replace();
+                else {
+                    Alert.alert('Cadastro realizado', 'Confirme seu e-mail, se necessário.'); router.replace('/');
+                }
+            } finally {setLoading(false);}
+        }
+
 
     return (
         <KeyboardAvoidingView style={styles.container}
@@ -43,8 +57,8 @@ export default function Register() {
                 onPress={handleRegister} loading={loading}
             />
             <TouchableOpacity
-                onPress={() => router.push('/register')}>
-                <Text style={styles.link}>Criar nova conta</Text>
+                onPress={() => router.push('/')}>
+                <Text style={styles.link}>Voltar para tela de login</Text>
             </TouchableOpacity>
         </KeyboardAvoidingView>
     );
@@ -61,5 +75,17 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         color: '#2f3640',
         marginBottom: 28
+    },
+    subtitle:{
+        color: '#7f8c8d',
+        textAlign: 'center',
+        marginTop: 8,
+        marginBottom: 32
+    },
+    link:{
+        color: '#008f22', 
+        textAlign: 'center',
+        marginTop: 20,
+        fontWeight: '700'
     }
 });
