@@ -16,19 +16,23 @@ export default function Register() {
     async function handleRegister() {
         if (!email.trim() || !password || !confirm)
             return Alert.alert('Atenção', 'Preencha todos os campos');
+        console.log('Preencha todos os campos')
         if (password.length < 6)
             return Alert.alert('Atenção', 'A senha deve ter no mínimo 6 caracteres');
         if (password !== confirm)
             return Alert.alert('Atenção', 'As senhas não conferem');
         try {
             setLoading(true);
-            const { data, error } = await signUp(email.trim(), password);
+            const { error } = await signUp(email.trim(), password);
             if (error) {
                 Alert.alert('Erro', error.message);
                 console.log('Erro', error.message); return;}
-                if (data.session) router.replace();
+                // if (data.session) router.replace('/');
                 else {
-                    Alert.alert('Cadastro realizado', 'Confirme seu e-mail, se necessário.'); router.replace('/');
+                    Alert.alert('Cadastro realizado', 
+                        'Confirme seu e-mail, se necessário.')
+                        console.log('Cadastro realizado'); 
+                        router.replace('/');
                 }
             } finally {setLoading(false);}
         }
@@ -53,7 +57,6 @@ export default function Register() {
             />
             <AppButton
                 title="Criar conta"
-                loading={loading}
                 onPress={handleRegister} loading={loading}
             />
             <TouchableOpacity

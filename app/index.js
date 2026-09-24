@@ -1,12 +1,32 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { router } from 'expo-router';
 import AppInput from '../src/components/AppInput';
 import AppButton from '../src/components/AppButton';
+import { signIn } from '../src/services/authService';
+
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setloading] = useState(false);
+
+    async function handleLogin() {
+        if(!email.trim()||!password.trim()){
+            Alert.alert('Atenção', 'Informe e-mail e senha');
+            return;
+        }
+        try {
+            setloading(true);
+            const {error}=await signIn(email.trim(), password.trim());
+            if(error){Alert.alert('Erro',error.message);
+                console.log('Erro',error.message);
+                return;
+            }
+            router.replace('/(app)/home');
+        }finally{
+            setloading(false);
+        }
+    }
 
     return (
         <KeyboardAvoidingView style={styles.container}
@@ -28,6 +48,7 @@ export default function Login() {
             <AppButton
                 title="Entrar"
                 loading={loading}
+                onPress={handleLogin}
             />
             <TouchableOpacity onPress={()=>router.push('/register')}>
                 <Text style={styles.link}>Criar nova conta</Text>
