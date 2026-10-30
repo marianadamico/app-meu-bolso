@@ -14,8 +14,11 @@ export default function Register() {
 
     //trim é uma função ou método usado para remover espaços em branco 
     async function handleRegister() {
-        if (!email.trim() || !password || !confirm)
-            return Alert.alert('Atenção', 'Preencha todos os campos');
+        console.log(email);
+        console.log(password);
+        console.log(confirm);
+        if (!email.trim()||!password||!confirm)
+            return Alert.alert('Atenção', 'Preencha todos os campos'),
         console.log('Preencha todos os campos')
         if (password.length < 6)
             return Alert.alert('Atenção', 'A senha deve ter no mínimo 6 caracteres');
